@@ -43,6 +43,17 @@ docker compose logs -f
 docker compose down
 ```
 
+### Teste Rápido
+
+Após subir o ambiente, pode ser executado o script de teste para validar todos os endpoints:
+
+```bash
+chmod +x test-services.sh
+./test-services.sh
+```
+
+Este script testa automaticamente todos os microsserviços novos.
+
 ## Endpoints
 
 ### Currency Report (porta 8102)
