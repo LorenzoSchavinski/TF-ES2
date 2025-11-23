@@ -1,5 +1,22 @@
 services:
+  naming-server:
+    build:
+      context: ./src/naming-server
+      dockerfile: Dockerfile
+    image: nameserver
+    ports:
+      - "8761:8761"
+    networks:
+      - currency-network
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+
   currency-exchange:
+    build:
+      context: ./src/currency-exchange-service
+      dockerfile: Dockerfile
     image: exchange
     ports:
       - "8000:8000"
@@ -13,7 +30,11 @@ services:
       resources:
         limits:
           memory: 700m
+
   currency-conversion:
+    build:
+      context: ./src/currency-conversion-service
+      dockerfile: Dockerfile
     image: conversion
     ports:
       - "8100:8100"
@@ -21,16 +42,21 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - currency-exchange
     environment:
       - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
     deploy:
       resources:
         limits:
           memory: 700m
-  history:
-    image: history
+
+  currency-report:
+    build:
+      context: ./src/currency-report
+      dockerfile: Dockerfile
+    image: report
     ports:
-      - "8120:8120"
+      - "8102:8100"
     networks:
       - currency-network
     depends_on:
@@ -41,7 +67,29 @@ services:
       resources:
         limits:
           memory: 700m
+
+  currency-history:
+    build:
+      context: ./src/currency-history
+      dockerfile: Dockerfile
+    image: history
+    ports:
+      - "8103:8101"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+
   api-gateway:
+    build:
+      context: ./src/api-gateway
+      dockerfile: Dockerfile
     image: gateway
     ports:
       - "8765:8765"
@@ -49,18 +97,10 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - currency-exchange
+      - currency-conversion
     environment:
       - eureka.client.serviceUrl.defaultZone=http://naming-server:8761/eureka
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-  naming-server:
-    image: nameserver
-    ports:
-      - "8761:8761"
-    networks:
-      - currency-network
     deploy:
       resources:
         limits:
