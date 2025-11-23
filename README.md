@@ -1,6 +1,10 @@
 # TF-ES2 - Microservices with Docker Compose & CI/CD
 
 ## Objetivo
+Integrantes
+Lorenzo Schavinski Eulalio de Souza, Gabriel Guggiana Escouto, João Vitor da Silva Freitas
+
+## Objetivo
 
 Sistema de microsserviços para gerenciamento de câmbio com integração via Docker Compose e pipeline de CI/CD.
 
