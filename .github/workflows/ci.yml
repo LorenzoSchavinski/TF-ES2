@@ -13,23 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Build and test currency-report
-      run: |
-        cd src/currency-report
-        chmod +x mvnw
-        ./mvnw clean package
-
-    - name: Build and test currency-history
-      run: |
-        cd src/currency-history
-        chmod +x mvnw
-        ./mvnw clean package
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
     - name: Build Docker image for currency-report
       run: |
@@ -43,20 +28,26 @@ jobs:
 
     - name: Run currency-report service
       run: |
-        docker run -d --name currency-report -p 8100:8100 report:latest
+        docker run -d --name currency-report -p 8102:8100 report:latest
 
     - name: Run currency-history service
       run: |
-        docker run -d --name currency-history -p 8101:8101 history:latest
+        docker run -d --name currency-history -p 8103:8101 history:latest
 
     - name: Wait for services to start
-      run: sleep 10
+      run: sleep 15
 
     - name: Test currency-report health endpoint
-      run: curl -f http://localhost:8100/health || true
+      run: curl -f http://localhost:8102/health || true
 
     - name: Test currency-history health endpoint
-      run: curl -f http://localhost:8101/health || true
+      run: curl -f http://localhost:8103/health || true
+
+    - name: Test currency-report quote endpoint
+      run: curl -f "http://localhost:8102/quote?from=USD&to=BRL" || true
+
+    - name: Test currency-history history endpoint
+      run: curl -f "http://localhost:8103/history?from=USD&to=BRL" || true
 
     - name: Cleanup
       if: always()
