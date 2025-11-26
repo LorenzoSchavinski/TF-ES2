@@ -89,6 +89,30 @@ curl "http://localhost:8103/history?from=USD&to=BRL"
 # }
 ```
 
+### Acesso via API Gateway (porta 8765)
+
+Os serviços também podem ser acessados através do API Gateway, que faz o roteamento automático:
+
+**Currency Report**
+
+```bash
+# Health check
+curl http://localhost:8765/currency-report/health
+
+# Get quote
+curl "http://localhost:8765/currency-report/quote?from=USD&to=BRL"
+```
+
+**Currency History**
+
+```bash
+# Health check
+curl http://localhost:8765/currency-history/health
+
+# Get history
+curl "http://localhost:8765/currency-history/history?from=USD&to=BRL"
+```
+
 
 ## CI/CD Pipeline
 
